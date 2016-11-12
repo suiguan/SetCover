@@ -8,7 +8,7 @@ class IntervalSetCoverGenerator:
    def generate(self, start, end, numSubSets):
       s1 = numSubSets/2
       s2 = numSubSets - s1
-      mincover = (end - start + 1) / numSubSets 
+      mincover = int((end - start + 1) / numSubSets) 
       (U, S1) = self.__generate__(start, end, s1)
       (_, S2) = self.__generate__(start + mincover - 1, end - mincover - 1, s2) 
       return (U, S1+S2)
@@ -16,7 +16,7 @@ class IntervalSetCoverGenerator:
    def __generate__(self, start, end, numSubSets):
       if start < 0 or end <= 0 or start >= end or numSubSets <= 0: raise Exception("Invalid arguments")
       if end - start < numSubSets: raise Exception("Too many subset requested") 
-      mincover = (end - start + 1) / numSubSets 
+      mincover = int((end - start + 1) / numSubSets) 
       subset = []
       setStart = start
       while True:
@@ -68,18 +68,18 @@ class IntervalSetCoverSolver:
 
         return cover
 
-    def RandomizedLinearProgrammingRelaxiation(self):
+    #def RandomizedLinearProgrammingRelaxiation(self):
 
 
 if __name__ == '__main__':
    g = IntervalSetCoverGenerator()
    (I, S) = g.generate(0, 1000000, 10000)
-   print 'Universe Interval = %s' % (I,)
-   print 'Number of Sub-intervals = %d' % len(S)
+   print ('Universe Interval = %s' % (I,))
+   print ('Number of Sub-intervals = %d' % len(S))
 
    begin = time.time()
    solver = IntervalSetCoverSolver(I, S)
    c = solver.greedy()
    end = time.time()
-   print 'greedy alogrithm find optimal cover size %d in %.3f secs' % (len(c), end - begin)
+   print ('greedy alogrithm find optimal cover size %d in %.3f secs' % (len(c), end - begin))
 
