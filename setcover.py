@@ -150,33 +150,47 @@ class IntervalSetCoverSolver:
                 allVars.remove(v)
         return cover
 
+    def checkCover(self, I, C):
+       covered = None
+       for c in C:
+         if covered == None: covered = c
+         left = c[0]
+         right = c[1]
+         if left < covered[0]: covered = (left, covered[1])
+         if right > covered[1]: covered = (covered[0], right)
+       if I != covered: raise Exception("Input cover does not cover all elements in the universe, I = %s, covered = %s" % (I, covered))
 
 if __name__ == '__main__':
+   print ('----------------------------------------------------')
    g = IntervalSetCoverGenerator()
    (I, S) = g.generate(0, 10000, 1000)
    print ('Universe Interval = %s' % (I,))
    print ('Number of Sub-intervals = %d' % len(S))
+   print ('----------------------------------------------------')
 
    begin = time.time()
    solver = IntervalSetCoverSolver(I, S)
    opt = solver.greedy()
    end = time.time()
+   solver.checkCover(I, opt)  
    print ('greedy alogrithm find optimal cover size %d in %.3f secs' % (len(opt), end - begin))
+   print ('----------------------------------------------------')
 
    begin = time.time()
    solver = IntervalSetCoverSolver(I, S)
    solver.solveSetCoverLpRelaxiation()
    end = time.time()
 
-   numTrails = 1000
+   numTrails = 1
    tolSize = 0
    print("running random pick from LP relaxation for %d times" % numTrails)
    for i in range(0, numTrails):
        c = solver.findCoverFromRandomPick()
        tolSize += len(c)
    avgSize = int(tolSize/numTrails)
-   avgTime = int((time.time() - end)/numTrails)
+   avgTime = (time.time() - end)/numTrails
+   solver.checkCover(I, c)  
 
-   print ('LP relaxation random pick find average sub-optimal cover size %d in %.3f secs' % (avgSize, end - begin + avgTime))
-   print ('LP relaxation random pick calculated approximation ratio = %.3f' % (avgSize/len(opt), ))
+   print ('LP relaxation random pick find average sub-optimal cover size %d in %.3f secs, total %.3f secs' % (avgSize, avgTime, end - begin + avgTime))
+   print ('LP relaxation random pick calculated approximation ratio = %.3f' % (float(avgSize)/len(opt), ))
 
