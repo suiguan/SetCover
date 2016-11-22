@@ -107,7 +107,7 @@ class IntervalSetCoverSolver:
 
         end = time.time()
         print("set up LP takes %.3f secs" % (end-begin,))
-        status = self.prob.solve()
+        status = self.prob.solve(pulp.COIN_CMD())
         print("solved %s solution LP relaxation in %.3f secs" % (LpStatus[status], time.time() - end))
 
     def findCoverFromRandomPick(self):
@@ -163,7 +163,7 @@ class IntervalSetCoverSolver:
 if __name__ == '__main__':
    print ('----------------------------------------------------')
    g = IntervalSetCoverGenerator()
-   (I, S) = g.generate(0, 10000, 1000)
+   (I, S) = g.generate(1, 100000, 5000)
    print ('Universe Interval = %s' % (I,))
    print ('Number of Sub-intervals = %d' % len(S))
    print ('----------------------------------------------------')
